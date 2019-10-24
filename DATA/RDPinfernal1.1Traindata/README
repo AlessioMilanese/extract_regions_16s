@@ -1,0 +1,22 @@
+RDP Infernal 1.1 Training Set README file
+
+Last update: 11/15/2013
+contact: RDP staff at rdpstaff@msu.edu
+        James R. Cole at colej@msu.edu
+
+
+This directory contains the hand-curated alignment files used to build Infernal 1.1 models and the pre-built models for bacteria, archaea 16S genes and fungal 28S genes. The online RDP Aligner can be found on RDP's website (http://rdp.cme.msu.edu/). The latest Infernal software can be downloaded from the Infernal website (http://infernal.janelia.org/).
+
+Bacteria: genome_bacteria_062013_aligned_round1.stk and bacteria_model.cm
+Archaea: genome_archaea_062013_aligned.stk and archaea_model.cm
+Fungi: fungal_RG_genomic_ITS_single.stk and fungal_28s_model.cm
+
+
+We optimized the Infernal aligner parameters, particularly the relative entropy, to provide improved handling for partial sequences. We settled on the following to build the model for Infernal version 1.1: "cmbuild --hand --ere 0.85".
+
+The recommended parameters use for alignment are "cmalign -g --noprob ". 
+
+Tips: Infernal only works with the sequences in the forward orientation. Negative bits saved scores from Infernal usually indicate something wrong with the input sequences, such as reverse orientation, non target rRNA sequences, or sequences of very low-quality. We recommend to discard sequences returned with negative bits saved scores from the final alignment.
+
+If you find these data useful to you, please cite "The Ribosomal Database Project: Data and Tools for High Throughput rRNA Analysis". 2014. Nucleic Acids Res. (Database issue), accepted.
+
