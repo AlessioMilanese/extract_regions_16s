@@ -98,6 +98,62 @@ def main(argv=None):
     if (args.fasta_input is None): args.fasta_input = ""
     if (args.al_input is None): args.al_input = ""
 
+    # ---------------------- check general parameters --------------------------
+    if args.verbose < 1:
+        sys.stderr.write("[E::main] Error: verbose level (-v) is less than 1\n")
+        sys.exit(1)
+    if args.threads < 1:
+        sys.stderr.write("[E::main] Error: number of threads (-t) is less than 1\n")
+        sys.exit(1)
+    # there cannot be -a and -i
+    if args.fasta_input != "" and args.al_input != "":
+        sys.stderr.write("[E::main] Error: Provide -i OR -a (not both)\n")
+        sys.exit(1)
+    # there should be either -a or -i
+    if args.fasta_input == "" and args.al_input == "":
+        sys.stderr.write("[E::main] Error: Missing input file (provide either -i or -a)\n")
+        sys.exit(1)
+
+    # --------------------------------------------------------------------------
+    #   0. CHECK DEPENDENCIES
+    # --------------------------------------------------------------------------
+    # Infernal
+    if not is_tool("cmalign"):
+        if args.fasta_input != "": # needed only if the input is the fasta file
+            sys.stderr.write("[E::main] Error: cmalign is not in the path. Please install Infernal.\n")
+            sys.exit(1)
+
+    # --------------------------------------------------------------------------
+    #   0. CHECK FILE
+    # --------------------------------------------------------------------------
+    # check that -i is a fasta file
+    if args.fasta_input != "":
+        try:
+            o = open(args.fasta_input,"r")
+            # check that it starts with ">"
+            if not(o.readline().startswith(">")):
+                sys.stderr.write("[E::main] Error. Not a fasta file: "+args.fasta_input+"\n")
+                sys.stderr.write("          Fasta file is expected to start with '>'\n")
+                o.close()
+                sys.exit(1)
+            o.close()
+        except:
+            sys.stderr.write("[E::main] Error: Cannot open file: "+args.fasta_input+"\n")
+            sys.exit(1)
+    # check that -a is alignment file
+    if args.al_input != "":
+        try:
+            o = open(args.al_input,"r")
+            # check that it starts with ">"
+            if not(o.readline().startswith(">")):
+                sys.stderr.write("[E::main] Error. Not an alignment file: "+args.al_input+"\n")
+                o.close()
+                sys.exit(1)
+            o.close()
+        except:
+            sys.stderr.write("[E::main] Error: Cannot open file: "+args.al_input+"\n")
+            sys.exit(1)
+
     return 0        # success
 
 
