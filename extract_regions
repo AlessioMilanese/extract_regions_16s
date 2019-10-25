@@ -145,6 +145,60 @@ def create_stream_al(alignment_file):
     o.close()
 
 # ------------------------------------------------------------------------------
+# function to find the positions to extract
+def find_al_position(forPrimer, reversePrimer, aligned_ref):
+    pos_to_check = dict()
+    # FIND VARIABLE REGIONS --------------------------
+    if forPrimer == "" and reversePrimer == "":
+        # then we extract all the 9 variable regions
+        o = open(relative_path+"DATA/variable_regions.tsv","r")
+        o.readline()
+        o.readline()
+        for line in o:
+            vals = line.rstrip().split("\t")
+            pos_to_check[vals[0]] = vals[1]+"-"+vals[2]
+        o.close()
+
+    # FIND REGION BETWEEN PRIMERS --------------------
+    if forPrimer != "" or reversePrimer != "":
+        # load primers and find the position in the string, i.e. left margin and
+        # right margin
+        o = open(relative_path+"DATA/primers_info.tsv","r")
+        o.readline()
+        for i in o:
+            vals = i.split("\t")
+            if vals[0] == forPrimer:
+                left_margin = vals[1]
+            if vals[0] == reversePrimer:
+                right_margin = vals[2]
+        o.close()
+        pos_to_check[forPrimer+"-"+reversePrimer] = left_margin+"-"+right_margin
+
+    # arriving here, we have in pos_to_check the positions in the reference
+    # sequence that we need to extract
+    # now we need to find these positions in the MSA
+    pos_in_msa = dict()
+    for region in pos_to_check:
+        # position in the string
+        left_margin = pos_to_check[region].split("-")[0]
+        right_margin = pos_to_check[region].split("-")[1]
+        # position in the MSA
+        left_msa = 0
+        right_msa = 0
+        # go throught the sequence and find the positions in the MSA
+        count_nucleotides = 0
+        for p in aligned_ref:
+            if p != "." and p != "-":
+                count_nucleotides = count_nucleotides + 1
+                if left_margin == count_nucleotides: left_msa = count_nucleotides
+                if right_margin == count_nucleotides: right_msa = count_nucleotides
+        # add result to the dict to return
+        pos_in_msa[region] = left_msa+"-"+right_msa
+
+    return pos_in_msa
+
+
+# ------------------------------------------------------------------------------
 # MAIN
 # ------------------------------------------------------------------------------
 def main(argv=None):
@@ -197,7 +251,14 @@ def main(argv=None):
     if args.fasta_input == "" and args.al_input == "":
         sys.stderr.write("[E::main] Error: Missing input file (provide either -i or -a)\n")
         sys.exit(1)
-    # check that the primers are correct:
+    # check that if one primer is present, then they both are
+    if (args.forPrimer != "" and args.reversePrimer == ""):
+        sys.stderr.write("[E::main] Error: -r missing\n")
+        sys.exit(1)
+    if (args.forPrimer == "" and args.reversePrimer != ""):
+        sys.stderr.write("[E::main] Error: -f missing\n")
+        sys.exit(1)
+    # check that the primers are correct (regarding the selection of the region)
     if args.forPrimer != "" and args.reversePrimer != "":
         pos_F = int(args.forPrimer[:-1])
         pos_R = int(args.reversePrimer[:-1])
@@ -268,6 +329,21 @@ def main(argv=None):
     # --------------------------------------------------------------------------
     #   2. EXTRACT COLUMNS FROM THE MSA
     # --------------------------------------------------------------------------
+    check_ref = True # faster to check than the startswith
+    for row in al_lines:
+        # the first line is the reference sequence, that we use to extract the
+        # correct columns
+        if check_ref:
+            if row.startswith("REFERENCE_Escherichia-coli-K-12"):
+                check_ref = False
+                al_ref_seq = row.rstrip().split("\t")[1]
+                dict_positions = find_al_position(args.forPrimer, args.reversePrimer,al_ref_seq)
+                # dict_positions contains the position in the alignment of the
+                # region(s) that we are intereseted in, example:
+                # {'V1': '134-189', 'V2': '265-308', ...
+        else:
+            # we extract the columns from dict_positions
+            
 
 
 
