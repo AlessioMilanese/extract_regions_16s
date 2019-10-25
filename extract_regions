@@ -197,6 +197,14 @@ def main(argv=None):
     if args.fasta_input == "" and args.al_input == "":
         sys.stderr.write("[E::main] Error: Missing input file (provide either -i or -a)\n")
         sys.exit(1)
+    # check that the primers are correct:
+    if args.forPrimer != "" and args.reversePrimer != "":
+        pos_F = int(args.forPrimer[:-1])
+        pos_R = int(args.reversePrimer[:-1])
+        if pos_F > pos_R:
+            sys.stderr.write("[E::main] Error: primers don't represent any region\n")
+            sys.exit(1)
+
 
     # --------------------------- set the clade --------------------------------
     selected_cmfile = "bacteria_model.cm"
@@ -260,7 +268,6 @@ def main(argv=None):
     # --------------------------------------------------------------------------
     #   2. EXTRACT COLUMNS FROM THE MSA
     # --------------------------------------------------------------------------
-
 
 
 
