@@ -47,6 +47,7 @@ Input option:
 Output option:
   -o  FILE    output file name [stdout]
   -A  FILE    save the intermediate alignment [None]
+  -s          print output as MSA
 
 Algorithm options:
   -t  INT     number of threads [1]
@@ -217,6 +218,7 @@ def main(argv=None):
     parser.add_argument('-c', action="store", default=None,dest='clade', help='which clade',choices=['Bacteria',"Archaea","Fungal"])
     parser.add_argument('-i', action="store", default=None,dest='fasta_input', help='fasta input')
     parser.add_argument('-a', action="store", default=None,dest='al_input', help='alignment input')
+    parser.add_argument('-s', action='store_true', default=None, dest='out_as_alignment', help='print output as an alignment')
     parser.add_argument('--mxsize', action="store", default=None, dest='mxsize', help='to input to cmalign')
     args = parser.parse_args()
 
@@ -236,6 +238,7 @@ def main(argv=None):
     if (args.forPrimer is None): args.forPrimer = ""
     if (args.fasta_input is None): args.fasta_input = ""
     if (args.al_input is None): args.al_input = ""
+    if (args.out_as_alignment is None): args.out_as_alignment = False
     if (args.clade is None): args.clade = "Bacteria"
 
     # ---------------------- check general parameters --------------------------
@@ -364,13 +367,19 @@ def main(argv=None):
             # if there is only one region, then we don't change the header
             if len(dict_positions) == 1:
                 outfile.write(">"+vals[0]+"\n")
-                outfile.write(vals[1][l_re:r_re]+"\n")
+                if args.out_as_alignment:
+                    outfile.write(vals[1][l_re:r_re]+"\n")
+                else:
+                    outfile.write(vals[1][l_re:r_re].replace(".","").replace("-","").upper()+"\n")
             # otherwise, we add the region info in the header
             else:
                 for rr in dict_positions:
                     outfile.write(">"+vals[0]+"__"+rr+"\n")
-                    outfile.write(vals[1][dict_positions[rr][0]:dict_positions[rr][1]]+"\n")
-            
+                    if args.out_as_alignment:
+                        outfile.write(vals[1][dict_positions[rr][0]:dict_positions[rr][1]]+"\n")
+                    else:
+                        outfile.write(vals[1][dict_positions[rr][0]:dict_positions[rr][1]].replace(".","").replace("-","").upper()+"\n")
+
 
     # move the temp file to the final destination ---------
     if output != "":
