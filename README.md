@@ -1,5 +1,17 @@
 # Extract regions from 16s gene sequences
 
+| For Primer | Start | End |
+| :---: | :---: | :---: |
+| V1 | 69 | 99 |
+| V2 | 137 | 242 |
+| V3 | 433 | 497 |
+| V4 | 576 | 682 |
+| V5 | 822 | 879 |
+| V6 | 986 | 1043 |
+| V7 | 1117 | 1173 |
+| V8 | 1243 | 1294 |
+| V9 | 1435 | 1465 |
+
 | For Primer | Start | End | Relative position | | Rev Primer | Start | End | Relative position |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 8F | 8 | 27 | before V1 | | 338R | 338 | 355 | after V2 |
