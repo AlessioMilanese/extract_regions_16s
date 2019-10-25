@@ -2,9 +2,14 @@
 
 This tool extract variable regions from the 16S rRNA gene.
 
-Pre-requisites
+Summary
 --------------
-* cmalign ([Infernal](http://eddylab.org/infernal/))
+* [Installation](https://github.com/AlessioMilanese/extract_regions_16s#installation)
+* [Simple example](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
+* [Mode 1: extract variable regions](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
+* [Mode 2: extract from primers](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
+* [Notes and advance usage](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
+* [Details of implementation](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
 
 Installation
 --------------
@@ -14,6 +19,9 @@ cd extract_regions_16s
 ```
 
 Note: in the following examples we assume that the python script ```extract_regions``` is in the system path.
+
+**Pre-requisites:**
+* cmalign ([Infernal](http://eddylab.org/infernal/))
 
 Simple example
 --------------
@@ -31,7 +39,7 @@ Running:
 extract_regions -i my_16S_seq.fasta
 ```
 
-the results is:
+results is:
 ```
 >seq1__V1
 ACACAGCAUGCAUAACACGAGCUAUCGACGACUACGACGGCA
@@ -44,7 +52,8 @@ ACUACGUGCACGAGUACGUAUACGGACAUCGAUUUACGAGCAGCGA
 ACAGAUCGGAUUCGAUCGGCAUCGGACCCAUCAGGAGGAUCGUCAAUCAUG
 ```
 
-
+Mode 1: extract variable regions
+--------------
 
 | For Primer | Start | End |
 | :---: | :---: | :---: |
@@ -58,6 +67,10 @@ ACAGAUCGGAUUCGAUCGGCAUCGGACCCAUCAGGAGGAUCGUCAAUCAUG
 | V8 | 1243 | 1294 |
 | V9 | 1435 | 1465 |
 
+
+Mode 2: extract from primers
+--------------
+
 | For Primer | Start | End | Relative position | | Rev Primer | Start | End | Relative position |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 8F | 8 | 27 | before V1 | | 338R | 338 | 355 | after V2 |
@@ -69,3 +82,11 @@ ACAGAUCGGAUUCGAUCGGCAUCGGACCCAUCAGGAGGAUCGUCAAUCAUG
 | 1237F | 1220 | 1237 | before V8 | | 1100R | 1100 | 1115 | after V6 |
 | | | | | | 1391R | 1391 | 1407 | after V8 |
 | | | | | | 1492R | 1492 | 1510 | after V9 |
+
+
+Notes and advance usage
+--------------
+
+
+Details of implementation
+--------------
