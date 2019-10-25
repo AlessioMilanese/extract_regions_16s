@@ -54,7 +54,7 @@ Algorithm options:
   -v  INT     verbose level: 1=error, 2=warning, 3=message, 4+=debugging [3]
 
 Cmalign options:
-  --mxsize  INT  et maximum allowable DP matrix size [4000]
+  --mxsize  INT  maximum allowable DP matrix size [4000]
 
 Possible forward primers: 8F, 27F, 68F, 341F, 515F, 967F, 1237F
 Possible reverse primers: 338R, 519R, 785R, 806R, 907R, 926R, 1100R, 1391R, 1492R
@@ -221,6 +221,11 @@ def main(argv=None):
     parser.add_argument('-s', action='store_true', default=None, dest='out_as_alignment', help='print output as an alignment')
     parser.add_argument('--mxsize', action="store", default=None, dest='mxsize', help='to input to cmalign')
     args = parser.parse_args()
+
+    if (args.fasta_input is None) and (args.al_input is None):
+        print(msg())
+        sys.exit(1)
+
 
     # set default for args.verbose
     if (args.verbose is None): args.verbose = 3
