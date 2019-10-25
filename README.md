@@ -1,5 +1,51 @@
 # Extract regions from 16s gene sequences
 
+This tool extract variable regions from the 16S rRNA gene.
+
+Pre-requisites
+--------------
+* cmalign ([Infernal](http://eddylab.org/infernal/))
+
+Installation
+--------------
+```bash
+git clone https://github.com/AlessioMilanese/extract_regions_16s.git
+cd extract_regions_16s
+```
+
+Note: in the following examples we assume that the python script ```extract_regions``` is in the system path.
+
+Simple example
+--------------
+The expected input is a fasta file with one (or more) 16S sequences, example:
+```bash
+cat my_16S_seq.fasta
+>seq1
+CAGTATTAGCGGGGATCATCGATCGATTACGATCGAGCTAGC....
+>seq2
+CAGTATGATCGCGGATCATCGATCGATTACGATCCAGCTAGG....
+```
+
+Running:
+```
+extract_regions -i my_16S_seq.fasta
+```
+
+the results is:
+```
+>seq1__V1
+ACACAGCAUGCAUAACACGAGCUAUCGACGACUACGACGGCA
+>seq1__V2
+CAUCAGUACCGAUCAUCGGAAUCAGCGAGGCAGGCGAAGGCGAGAGAGCAUAC
+...
+>seq1__V8
+ACUACGUGCACGAGUACGUAUACGGACAUCGAUUUACGAGCAGCGA
+>seq1__V9
+ACAGAUCGGAUUCGAUCGGCAUCGGACCCAUCAGGAGGAUCGUCAAUCAUG
+```
+
+
+
 | For Primer | Start | End |
 | :---: | :---: | :---: |
 | V1 | 69 | 99 |
