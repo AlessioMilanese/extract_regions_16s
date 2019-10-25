@@ -192,10 +192,10 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
             count_pos_msa = count_pos_msa + 1
             if p != "." and p != "-":
                 count_nucleotides = count_nucleotides + 1
-                if left_margin == count_nucleotides: left_msa = count_pos_msa
+                if left_margin == (count_nucleotides + 1): left_msa = count_pos_msa
                 if right_margin == count_nucleotides: right_msa = count_pos_msa
         # add result to the dict to return
-        pos_in_msa[region] = str(left_msa)+"-"+str(right_msa)
+        pos_in_msa[region] = [left_msa,right_msa]
 
     return pos_in_msa
 
@@ -224,7 +224,7 @@ def main(argv=None):
     if (args.verbose is None): args.verbose = 3
 
     # set the default
-    if (args.output is None): args.output = ""
+    if (args.output is None): output = ""
     if (args.threads is None): args.threads = 1
     if (args.mxsize is None): args.mxsize = 4000
     if (args.output_alignment is None):
@@ -332,6 +332,14 @@ def main(argv=None):
     #   2. EXTRACT COLUMNS FROM THE MSA
     # --------------------------------------------------------------------------
     check_ref = True # faster to check than the startswith
+
+    # general print
+    if output != "":
+        outfile = tempfile.NamedTemporaryFile(delete=False, mode="w")
+        os.chmod(outfile.name, 0o644)
+    else:
+        outfile = sys.stdout
+
     for row in al_lines:
         # the first line is the reference sequence, that we use to extract the
         # correct columns
@@ -343,13 +351,42 @@ def main(argv=None):
                 # dict_positions contains the position in the alignment of the
                 # region(s) that we are intereseted in, example:
                 # {'V1': '134-189', 'V2': '265-308', ...
+
+                # if we have only one, I extract the key of the dictionary
+                s_region = next(iter(dict_positions))
+                # and the two boundaries
+                l_re = dict_positions[s_region][0]
+                r_re = dict_positions[s_region][1]
+
         else:
             # we extract the columns from dict_positions
-            print(dict_positions)
+            vals = row.rstrip().split("\t")
+            # if there is only one region, then we don't change the header
+            if len(dict_positions) == 1:
+                outfile.write(">"+vals[0]+"\n")
+                outfile.write(vals[1][l_re:r_re]+"\n")
+            # otherwise, we add the region info in the header
+            else:
+                for rr in dict_positions:
+                    outfile.write(">"+vals[0]+"__"+rr+"\n")
+                    outfile.write(vals[1][dict_positions[rr][0]:dict_positions[rr][1]]+"\n")
+            
 
-
-
-
+    # move the temp file to the final destination ---------
+    if output != "":
+        try:
+            outfile.flush()
+            os.fsync(outfile.fileno())
+            outfile.close()
+        except:
+            sys.stderr.write("[E::main] Error: failed to save the output file\n")
+            sys.exit(1)
+        try:
+            shutil.move(outfile.name,output) #It is not atomic if the files are on different filsystems.
+        except:
+            sys.stderr.write("[E::main] Error: failed to save the output file\n")
+            sys.stderr.write("[E::main] you can find the file here:\n"+outfile.name+"\n")
+            sys.exit(1)
 
 
     return 0        # success
