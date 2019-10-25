@@ -180,20 +180,22 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
     pos_in_msa = dict()
     for region in pos_to_check:
         # position in the string
-        left_margin = pos_to_check[region].split("-")[0]
-        right_margin = pos_to_check[region].split("-")[1]
+        left_margin = int(pos_to_check[region].split("-")[0])
+        right_margin = int(pos_to_check[region].split("-")[1])
         # position in the MSA
         left_msa = 0
         right_msa = 0
         # go throught the sequence and find the positions in the MSA
         count_nucleotides = 0
+        count_pos_msa = 0
         for p in aligned_ref:
+            count_pos_msa = count_pos_msa + 1
             if p != "." and p != "-":
                 count_nucleotides = count_nucleotides + 1
-                if left_margin == count_nucleotides: left_msa = count_nucleotides
-                if right_margin == count_nucleotides: right_msa = count_nucleotides
+                if left_margin == count_nucleotides: left_msa = count_pos_msa
+                if right_margin == count_nucleotides: right_msa = count_pos_msa
         # add result to the dict to return
-        pos_in_msa[region] = left_msa+"-"+right_msa
+        pos_in_msa[region] = str(left_msa)+"-"+str(right_msa)
 
     return pos_in_msa
 
@@ -343,7 +345,7 @@ def main(argv=None):
                 # {'V1': '134-189', 'V2': '265-308', ...
         else:
             # we extract the columns from dict_positions
-            
+            print(dict_positions)
 
 
 
