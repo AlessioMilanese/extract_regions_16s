@@ -71,6 +71,78 @@ def is_tool(name):
             return False
     return True
 
+# ------------------------------------------------------------------------------
+# function to align fasta sequences with cmalign and return the stream of data
+def cm_align_fun(relative_path,fasta_input,mxsize,threads,selected_cmfile,output_alignment,save_alignment):
+    # NOTE1: that the alignment used U instead of T's, so we need to convert
+    # before calling the alignment
+
+    # NOTE2: we add a reference sequence at the beginning. The variable
+    # regions and primers are defined on this sequence
+
+    # both are taken care in bin/print_converted.py
+    cmd_convert = "python "+relative_path+"bin/print_converted.py "
+    cmd_convert = cmd_convert + relative_path+"DATA/reference_sequence.fasta "
+    cmd_convert = cmd_convert + fasta_input
+
+    # cmalignscript (note output is in stdout)
+    cmd_cmalign = "cmalign --mxsize "+str(mxsize)+" --outformat Pfam --cpu "+str(threads)+" "
+    # cm model
+    cmd_cmalign = cmd_cmalign + relative_path+"DATA/RDPinfernal1.1Traindata/"+selected_cmfile
+    # fasta input, is through stdin
+    cmd_cmalign = cmd_cmalign + " -"
+
+    # parse alignment
+    cmd_parse_al = "python "+relative_path+"bin/parse_alignment.py "
+    cmd_parse_al = cmd_parse_al + output_alignment + " "+save_alignment
+
+    # run convert and alignment ----------------------------
+    CMD_convert = shlex.split(cmd_convert)
+    CMD_cmalign = shlex.split(cmd_cmalign)
+    CMD_parse_al = shlex.split(cmd_parse_al)
+
+    # import devnull
+    try:
+        from subprocess import DEVNULL
+    except ImportError:
+        DEVNULL = open(os.devnull, 'wb')
+
+    # commands
+    convert_ex = subprocess.Popen(CMD_convert,stdout=subprocess.PIPE,encoding='utf8')
+    cmalign_ex = subprocess.Popen(CMD_cmalign,stdin=convert_ex.stdout,stdout=subprocess.PIPE,encoding='utf8')
+    parse_al_ex = subprocess.Popen(CMD_parse_al,stdin=cmalign_ex.stdout,stdout=subprocess.PIPE,encoding='utf8')
+
+    # return the line
+    for line in parse_al_ex.stdout:
+        yield line
+
+    # check that the commands finished correctly
+    convert_ex.stdout.close()
+    return_code = convert_ex.wait()
+    if return_code:
+        sys.stderr.write("[E::cmalign] Error. parse the fasta file failed\n")
+        sys.exit(1)
+
+    cmalign_ex.stdout.close()
+    return_code = cmalign_ex.wait()
+    if return_code:
+        sys.stderr.write("[E::cmalign] Error. cmalign failed\n")
+        sys.exit(1)
+
+    parse_al_ex.stdout.close()
+    return_code = parse_al_ex.wait()
+    if return_code:
+        sys.stderr.write("[E::cmalign] Error. parsing the alignment file failed\n")
+        sys.exit(1)
+
+
+# ------------------------------------------------------------------------------
+# function to load to the stream of data the alignment rows
+def create_stream_al(alignment_file):
+    o = open(alignment_file,"r")
+    for line in o:
+        yield line
+    o.close()
 
 # ------------------------------------------------------------------------------
 # MAIN
@@ -99,7 +171,11 @@ def main(argv=None):
     if (args.output is None): args.output = ""
     if (args.threads is None): args.threads = 1
     if (args.mxsize is None): args.mxsize = 4000
-    if (args.output_alignment is None): args.output_alignment = ""
+    if (args.output_alignment is None):
+        args.output_alignment = "NA"
+        save_alignment = "False"
+    else:
+        save_alignment = "True"
     if (args.reversePrimer is None): args.reversePrimer = ""
     if (args.forPrimer is None): args.forPrimer = ""
     if (args.fasta_input is None): args.fasta_input = ""
@@ -158,8 +234,8 @@ def main(argv=None):
     if args.al_input != "":
         try:
             o = open(args.al_input,"r")
-            # check that it starts with ">"
-            if not(o.readline().startswith(">")):
+            # check that it starts with "REFERENCE"
+            if not(o.readline().startswith("REFERENCE")):
                 sys.stderr.write("[E::main] Error. Not an alignment file: "+args.al_input+"\n")
                 o.close()
                 sys.exit(1)
@@ -173,23 +249,21 @@ def main(argv=None):
     # --------------------------------------------------------------------------
     if args.fasta_input != "":
         # we use cmailgn to align the 16S sequences as input to
-        # NOTE1: that the alignment used U instead of T's, so we need to convert
-        # before calling the alignment
+        al_lines = cm_align_fun(relative_path,args.fasta_input,args.mxsize,args.threads,selected_cmfile,args.output_alignment,save_alignment)
+        # in al_lines there is a stream of rows that represents aligned 16S sequences
 
-        # NOTE2: we add a reference sequence at the beginning. The variable
-        # regions and primers are defined on this sequence
+    # otherwise we load the alignment saved before
+    if args.al_input != "":
+        al_lines = create_stream_al(args.al_input)
 
-        # both are taken care in bin/print_converted.py
-        cmd_convert = "python "+relative_path+"bin/print_converted.py "
-        cmd_convert = cmd_convert + relative_path+"DATA/reference_sequence.fasta "
-        cmd_convert = cmd_convert + args.fasta_input
 
-        # cmalignscript (note output is in stdout)
-        cmd_cmalign = "cmalign --mxsize "+args.mxsize+" --outformat Pfam --cpu "+args.threads
-        # cm model
-        cmd_cmalign = cmd_cmalign + relative_path+"DATA/RDPinfernal1.1Traindata/"+selected_cmfile
-        # fasta input, is through stdin
-        cmd_cmalign = cmd_cmalign + " -"
+    # --------------------------------------------------------------------------
+    #   2. EXTRACT COLUMNS FROM THE MSA
+    # --------------------------------------------------------------------------
+
+
+
+
 
 
 

@@ -7,11 +7,13 @@
 import sys
 import os
 import tempfile
+import shutil
 
-save_intermediate_alignment = sys.argv[1]
+file_alignment_name = sys.argv[1]
+save_alignment = sys.argv[2]
 
 # check if we need to save the alignment
-if save_intermediate_alignment != "":
+if save_alignment == "True":
     al_temp_file = tempfile.NamedTemporaryFile(delete=False, mode="w")
     os.chmod(al_temp_file.name, 0o644)
 
@@ -23,12 +25,12 @@ for line in sys.stdin:
             if vals[0] != "":
                 sys.stdout.write(vals[0]+"\t"+vals[-1]+"\n")
                 # check if saving the intermediate alignment
-                if save_intermediate_alignment != "":
-                    al_temp_file.write(str_end_header)
+                if save_alignment == "True":
+                    al_temp_file.write(vals[0]+"\t"+vals[-1]+"\n")
 
 # we exit if we dont need to save the temporary alignment
-if save_intermediate_alignment == "":
-    return 0
+if save_alignment == "False":
+    sys.exit(0)
 
 # we arrive here if we save the alignment
 try:
@@ -39,8 +41,8 @@ except:
     sys.stderr.write("Error when closing alignment file\n")
 
 try:
-    shutil.move(al_temp_file.name,save_intermediate_alignment) #It is not atomic if the files are on different filsystems.
+    shutil.move(al_temp_file.name,file_alignment_name) #It is not atomic if the files are on different filsystems.
 except:
     sys.stderr.write("Error when copying intermediate alignment to the final destination\n")
 
-return 0
+sys.exit(0)
