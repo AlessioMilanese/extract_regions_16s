@@ -10,6 +10,7 @@ Summary
 * [Mode 2: extract from primers](https://github.com/AlessioMilanese/extract_regions_16s#mode-2-extract-from-primers)
 * [Notes and advance usage](https://github.com/AlessioMilanese/extract_regions_16s#notes-and-advance-usage)
 * [Details of implementation](https://github.com/AlessioMilanese/extract_regions_16s#details-of-implementation)
+* [Options list](https://github.com/AlessioMilanese/extract_regions_16s#options-list)
 
 Installation
 --------------
@@ -54,8 +55,10 @@ ACAGAUCGGAUUCGAUCGGCAUCGGACCCAUCAGGAGGAUCGUCAAUCAUG
 
 Mode 1: extract variable regions
 --------------
+If you don't specify any primer (with `-f` and `-r`), then all the variable regions will be extracted.
+We extract the variable regions defined in [Yarza et al. Nat. Rev. Microbiol. (2014)](https://www.nature.com/articles/nrmicro3330):
 
-| For Primer | Start | End |
+| Variable region | Start | End |
 | :---: | :---: | :---: |
 | V1 | 69 | 99 |
 | V2 | 137 | 242 |
@@ -67,6 +70,9 @@ Mode 1: extract variable regions
 | V8 | 1243 | 1294 |
 | V9 | 1435 | 1465 |
 
+These positions refers to the 16S rRNA gene of *Escherichia coli* str. K-12.
+The output is a fasta file with 9 times more sequences (one for each variable region).
+The regions are indicated with `__V[1-9]` at the end of the fasta header (see also [Simple example](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)).
 
 Mode 2: extract from primers
 --------------
@@ -89,4 +95,8 @@ Notes and advance usage
 
 
 Details of implementation
+--------------
+
+
+Options list
 --------------
