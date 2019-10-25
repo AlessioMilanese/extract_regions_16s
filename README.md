@@ -6,10 +6,10 @@ Summary
 --------------
 * [Installation](https://github.com/AlessioMilanese/extract_regions_16s#installation)
 * [Simple example](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
-* [Mode 1: extract variable regions](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
-* [Mode 2: extract from primers](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
-* [Notes and advance usage](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
-* [Details of implementation](https://github.com/AlessioMilanese/extract_regions_16s#simple-example)
+* [Mode 1: extract variable regions](https://github.com/AlessioMilanese/extract_regions_16s#mode-1-extract-variable-regions)
+* [Mode 2: extract from primers](https://github.com/AlessioMilanese/extract_regions_16s#mode-2-extract-from-primers)
+* [Notes and advance usage](https://github.com/AlessioMilanese/extract_regions_16s#notes-and-advance-usage)
+* [Details of implementation](https://github.com/AlessioMilanese/extract_regions_16s#details-of-implementation)
 
 Installation
 --------------
