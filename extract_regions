@@ -226,7 +226,10 @@ def main(argv=None):
     if (args.verbose is None): args.verbose = 3
 
     # set the default
-    if (args.output is None): output = ""
+    if (args.output is None):
+        output = ""
+    else:
+        output = args.output
     if (args.threads is None): args.threads = 1
     if (args.mxsize is None): args.mxsize = 4000
     if (args.output_alignment is None):
