@@ -22,6 +22,7 @@ cd extract_regions_16s
 Note: in the following examples we assume that the python script ```extract_regions``` is in the system path.
 
 **Pre-requisites:**
+* python >= 3.6
 * cmalign ([Infernal](http://eddylab.org/infernal/))
 
 Simple example
