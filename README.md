@@ -104,6 +104,28 @@ CGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAACAGGAAGAAGCUUGC
 
 Where the header is the same as the original fasta file.
 
+
+
+
+
+Mode 3: extract based on positions
+--------------
+
+You can specify the exact position that you want to extract with `-f` and `-r`.
+
+For example, if you want to extract all the sequences of primer `8F`, you can run `extract_regions -i my_16S_seq.fasta -f 8 -r 27`, which will result in:
+```
+>seq1
+AGAGUUUGAUCAUGGCUCAG
+>seq2
+CGAGUUUGAUCAUGGCUUCAG
+```
+
+Note that the positions are based on the E.coli K12 16S gene.
+
+
+
+
 Notes and advance usage
 --------------
 
