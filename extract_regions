@@ -161,7 +161,7 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
         o.close()
 
     # FIND REGION BETWEEN PRIMERS --------------------
-    if (forPrimer != "" or reversePrimer != "") and forPrimer.endswith("F") and revPrimer.endswith("R"):
+    if (forPrimer != "" or reversePrimer != "") and forPrimer.endswith("F") and reversePrimer.endswith("R"):
         # load primers and find the position in the string, i.e. left margin and
         # right margin
         o = open(relative_path+"DATA/primers_info.tsv","r")
@@ -179,7 +179,7 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
     if forPrimer != "" or reversePrimer != "":
         if not forPrimer.endswith("F"):
             pos_to_check[forPrimer+"-"+reversePrimer] = forPrimer+"-"+reversePrimer
-    print(pos_to_check)
+
     # arriving here, we have in pos_to_check the positions in the reference
     # sequence that we need to extract
     # now we need to find these positions in the MSA
