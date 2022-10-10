@@ -79,6 +79,8 @@ The regions are indicated with `__V[1-9]` at the end of the fasta header (see al
 Mode 2: extract from primers
 --------------
 
+You can specify which primers to use with `-f` and `-r`.
+
 | For Primer | Start | End | Relative position | | Rev Primer | Start | End | Relative position |
 | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: | :---: |
 | 8F | 8 | 27 | before V1 | | 338R | 338 | 355 | after V2 |
@@ -91,6 +93,16 @@ Mode 2: extract from primers
 | | | | | | 1391R | 1391 | 1407 | after V8 |
 | | | | | | 1492R | 1492 | 1510 | after V9 |
 
+If you run on the fasta file defined before (`my_16S_seq.fasta` with two sequences) using `extract_regions -i my_16S_seq.fasta -f 8F -r 338R` you will obtain:
+
+```
+>seq1
+AGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAACAGGAAGAAGCUUGCUUCUUUGCUGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGAAACUGCCUGAUGGAGGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAACGUCGCAAGACCAAAGAGGGGUACCUUCGGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCUAGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGA
+>seq2
+CGAGUUUGAUCAUGGCUCAGAUUGAACGCUGGCGGCAGGCCUAACACAUGCAAGUCGAACGGUAACAGGAAGAAGCUUGCUUCUUUGCUGACGAGUGGCGGACGGGUGAGUAAUGUCUGGGAAACUGCCUGAUGGAGGGGGAUAACUACUGGAAACGGUAGCUAAUACCGCAUAACGUCGCAAGACCAAAGAGGGGUACCUUCGGGCCUCUUGCCAUCGGAUGUGCCCAGAUGGGAUUAGCUAGUAGGUGGGGUAACGGCUCACCUAGGCGACGAUCCCUAGCUGGUCUGAGAGGAUGACCAGCCACACUGGAACUGAGACACGGUCCAGA
+```
+
+Where the header is the same as the original fasta file.
 
 Notes and advance usage
 --------------
