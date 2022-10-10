@@ -161,7 +161,7 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
         o.close()
 
     # FIND REGION BETWEEN PRIMERS --------------------
-    if forPrimer != "" or reversePrimer != "":
+    if (forPrimer != "" or reversePrimer != "") and forPrimer.endswith("F") and revPrimer.endswith("R"):
         # load primers and find the position in the string, i.e. left margin and
         # right margin
         o = open(relative_path+"DATA/primers_info.tsv","r")
@@ -175,6 +175,11 @@ def find_al_position(forPrimer, reversePrimer, aligned_ref):
         o.close()
         pos_to_check[forPrimer+"-"+reversePrimer] = left_margin+"-"+right_margin
 
+    # FIND REGION BETWEEN POSITIONS --------------------
+    if forPrimer != "" or reversePrimer != "":
+        if not forPrimer.endswith("F"):
+            pos_to_check[forPrimer+"-"+reversePrimer] = forPrimer+"-"+reversePrimer
+    print(pos_to_check)
     # arriving here, we have in pos_to_check the positions in the reference
     # sequence that we need to extract
     # now we need to find these positions in the MSA
@@ -213,8 +218,8 @@ def main(argv=None):
     parser.add_argument('-t', type=int, action="store", dest='threads', default=None, help='Number of threads to be used.')
     parser.add_argument('-o', action="store", dest='output', default=None, help='name of output file')
     parser.add_argument('-A', action="store", dest='output_alignment', default=None, help='save alignment')
-    parser.add_argument('-r', action="store", default=None,dest='reversePrimer', help='which reverse primer to use',choices=['338R', '519R', '785R', '806R', '907R', '926R', '1100R', '1391R', '1492R'])
-    parser.add_argument('-f', action="store", default=None,dest='forPrimer', help='which forward primer to use',choices=['8F', '27F','68F', '341F', '515F', '967F', '1237F'])
+    parser.add_argument('-r', action="store", default=None,dest='reversePrimer', help='which reverse primer to use')
+    parser.add_argument('-f', action="store", default=None,dest='forPrimer', help='which forward primer to use')
     parser.add_argument('-c', action="store", default=None,dest='clade', help='which clade',choices=['Bacteria',"Archaea","Fungal"])
     parser.add_argument('-i', action="store", default=None,dest='fasta_input', help='fasta input')
     parser.add_argument('-a', action="store", default=None,dest='al_input', help='alignment input')
@@ -273,8 +278,15 @@ def main(argv=None):
         sys.exit(1)
     # check that the primers are correct (regarding the selection of the region)
     if args.forPrimer != "" and args.reversePrimer != "":
-        pos_F = int(args.forPrimer[:-1])
-        pos_R = int(args.reversePrimer[:-1])
+        if args.forPrimer[-1] == "F":
+            pos_F = int(args.forPrimer[:-1])
+        else:
+            pos_F = int(args.forPrimer)
+        if args.reversePrimer[-1] == "R":
+            pos_R = int(args.reversePrimer[:-1])
+        else:
+            pos_R = int(args.reversePrimer)
+
         if pos_F > pos_R:
             sys.stderr.write("[E::main] Error: primers don't represent any region\n")
             sys.exit(1)
